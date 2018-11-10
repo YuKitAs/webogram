@@ -2894,7 +2894,7 @@ img.img_fullsize {
   display: inline-block;
   line-height: 33px;
   text-align: center;
-  width: 50%;
+  width: 33.3%;
   text-transform: uppercase;
   font-weight: bold;
   transition: color ease-in-out 0.2s;
@@ -2906,15 +2906,18 @@ img.img_fullsize {
   }
 }
 .composer_emoji_tooltip_tab_emoji,
-.composer_emoji_tooltip_tabs_stickers_active .composer_emoji_tooltip_tab_stickers {
+.composer_emoji_tooltip_tabs_stickers_active .composer_emoji_tooltip_tab_stickers,
+.composer_emoji_tooltip_tabs_gif_active .composer_emoji_tooltip_tab_gif {
   color: #53a9ea;
 }
 .composer_emoji_tooltip_tabs_stickers_active .composer_emoji_tooltip_tab_emoji,
-.composer_emoji_tooltip_tab_stickers {
+.composer_emoji_tooltip_tab_stickers,
+.composer_emoji_tooltip_tabs_gif_active .composer_emoji_tooltip_tab_emoji,
+.composer_emoji_tooltip_tab_gif {
   color: #999;
 }
 .composer_emoji_tooltip_tab_shadow {
-  width: 50%;
+  width: 33.3%;
   height: 1px;
   background: #53a9ea;
   -webkit-box-shadow: 0px 1px 0px 0px rgba(83,169,234,1);
@@ -2926,6 +2929,10 @@ img.img_fullsize {
 
   .composer_emoji_tooltip_tabs_stickers_active & {
     .transform(translate3d(100%,0,0));
+  }
+
+  .composer_emoji_tooltip_tabs_gif_active & {
+    .transform(translate3d(200%,0,0));
   }
 }
 
@@ -2963,6 +2970,13 @@ img.img_fullsize {
       max-width: 28px;
       max-height: 28px;
     }
+  }
+
+  .composer_emoji_tooltip_tab_gif_content & {
+    width: 100%;
+    margin: 0 0 3px;
+    padding: 0 5px 15px;
+    line-height: 0;
   }
 }
 
@@ -3025,7 +3039,7 @@ img.img_fullsize {
 }
 .composer_emoji_tooltip_tabs_contents {
   position: absolute;
-  width: 568px;
+  width: 852px;
 
   .non_msie & {
     transition: transform ease-in-out 0.2s;
@@ -3033,6 +3047,9 @@ img.img_fullsize {
   }
   .non_msie .composer_emoji_tooltip_tabs_stickers_active & {
     .transform(translate3d(-284px,0,0));
+  }
+  .non_msie .composer_emoji_tooltip_tabs_gif_active & {
+    .transform(translate3d(-568px,0,0));
   }
 
   .msie & {
@@ -3042,10 +3059,13 @@ img.img_fullsize {
   .msie .composer_emoji_tooltip_tabs_stickers_active & {
     margin-left: -284px;
   }
-
+  .msie .composer_emoji_tooltip_tabs_gif_active & {
+    margin-left: -568px;
+  }
 }
 .composer_emoji_tooltip_tab_emoji_content,
-.composer_emoji_tooltip_tab_stickers_content {
+.composer_emoji_tooltip_tab_stickers_content,
+.composer_emoji_tooltip_tab_gif_content {
   width: 284px;
   height: 275px;
   float: left;

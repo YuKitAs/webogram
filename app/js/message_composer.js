@@ -218,6 +218,7 @@ EmojiTooltip.prototype.createTooltip = function () {
   <div class="composer_emoji_tooltip_tabs">\
     <div class="composer_emoji_tooltip_tab composer_emoji_tooltip_tab_emoji">' + this.langpack.im_emoji_tab + '</div>\
     <div class="composer_emoji_tooltip_tab composer_emoji_tooltip_tab_stickers">' + this.langpack.im_stickers_tab + '</div>\
+    <div class="composer_emoji_tooltip_tab composer_emoji_tooltip_tab_gif">' + this.langpack.im_gif_tab + '</div>\
     <div class="composer_emoji_tooltip_tab_shadow"></div>\
   </div>\
   <div class="composer_emoji_tooltip_tabs_wrap">\
@@ -241,6 +242,11 @@ EmojiTooltip.prototype.createTooltip = function () {
           </div>\
           <div class="composer_emoji_tooltip_categories"></div>\
       </div>\
+      <div class="composer_emoji_tooltip_tab_gif_content">\
+        <div class="composer_emoji_tooltip_content_wrap">\      \
+           <div class="composer_emoji_tooltip_content composer_emoji_tooltip_content_gif clearfix"></div>\
+        </div>\
+      </div>\
     </div>\
   </div>\
   <div class="composer_emoji_tooltip_tail"><i class="icon icon-tooltip-tail"></i></div>\
@@ -258,9 +264,10 @@ EmojiTooltip.prototype.createTooltip = function () {
   this.contentEl = $('.composer_emoji_tooltip_content', this.tooltipEl)
   this.emojiContentEl = $('.composer_emoji_tooltip_content_emoji', this.tooltipEl)
   this.stickersContentEl = $('.composer_emoji_tooltip_content_stickers', this.tooltipEl)
+  this.gifContentEl = $('.composer_emoji_tooltip_content_gif', this.tooltipEl)
 
   // Tabs
-  angular.forEach(['emoji', 'stickers'], function (tabName, tabIndex) {
+  angular.forEach(['emoji', 'stickers', 'gif'], function (tabName, tabIndex) {
     var tab = $('.composer_emoji_tooltip_tab_' + tabName, self.tabsEl)
       .on('mousedown', function (e) {
         self.selectTab(tabIndex)
@@ -324,6 +331,7 @@ EmojiTooltip.prototype.createTooltip = function () {
   this.stickersScroller.onScroll(function (el, st) {
     self.onStickersScroll(el, st)
   })
+  this.gifScroller = new Scroller(this.gifContentEl, {classPrefix: 'composer_emoji_tooltip'})
 
   this.contentEl.on('mousedown', function (e) {
     e = e.originalEvent || e
@@ -378,12 +386,17 @@ EmojiTooltip.prototype.selectCategory = function (cat, force) {
   $('.active', this.categoriesEl).removeClass('active')
   this.cat = cat
 
-  if (this.tab) {
-    this.activateStickerCategory()
-    this.updateStickersContents(force)
-  } else {
-    $(this.categoriesEl[this.tab].childNodes[cat]).addClass('active')
-    this.updateEmojiContents()
+  switch (this.tab) {
+    case 0:
+      $(this.categoriesEl[this.tab].childNodes[cat]).addClass('active')
+      this.updateEmojiContents()
+      break
+    case 1:
+      this.activateStickerCategory()
+      this.updateStickersContents(force)
+      break
+    case 2:
+      this.updateGifContents()
   }
 }
 
@@ -397,7 +410,8 @@ EmojiTooltip.prototype.selectTab = function (tab, force) {
 
   var self = this
   setTimeout(function () {
-    $(self.tooltipEl).toggleClass('composer_emoji_tooltip_tabs_stickers_active', tab == 1)
+    $(self.tooltipEl).toggleClass('composer_emoji_tooltip_tabs_stickers_active', tab === 1)
+    $(self.tooltipEl).toggleClass('composer_emoji_tooltip_tabs_gif_active', tab === 2)
   }, 0)
 }
 
@@ -456,6 +470,17 @@ EmojiTooltip.prototype.updateEmojiContents = function () {
       renderContent()
     })
   }
+}
+
+EmojiTooltip.prototype.updateGifContents = function () {
+  var self = this
+
+  var renderGif = function () {
+    self.gifContentEl.html('')
+    self.gifScroller.reinit()
+  }
+
+  renderGif()
 }
 
 EmojiTooltip.prototype.updateStickersContents = function (force) {
@@ -590,9 +615,29 @@ EmojiTooltip.prototype.onStickersScroll = function (scrollable, scrollTop) {
 }
 
 EmojiTooltip.prototype.onStickersChanged = function () {
-  if (this.tab) {
+  if (this.tab === 1) {
     this.updateStickersContents(true)
   }
+}
+
+EmojiTooltip.prototype.show = function () {
+    this.updatePosition()
+
+    switch (this.tab) {
+      case 0:
+        this.updateEmojiContents()
+        break
+      case 1:
+        this.updateStickersContents(true)
+        break
+      case 2:
+        this.updateGifContents()
+    }
+
+    this.tooltipEl.addClass('composer_emoji_tooltip_shown')
+    this.btnEl.addClass('composer_emoji_insert_btn_on')
+    delete this.showTimeout
+    this.shown = true
 }
 
 EmojiTooltip.prototype.activateStickerCategory = function () {
@@ -614,19 +659,6 @@ EmojiTooltip.prototype.activateStickerCategory = function () {
 EmojiTooltip.prototype.updatePosition = function () {
   var offset = this.btnEl.offset()
   this.tooltipEl.css({top: offset.top, left: offset.left})
-}
-
-EmojiTooltip.prototype.show = function () {
-  this.updatePosition()
-  if (this.tab) {
-    this.updateStickersContents(true)
-  } else {
-    this.updateEmojiContents()
-  }
-  this.tooltipEl.addClass('composer_emoji_tooltip_shown')
-  this.btnEl.addClass('composer_emoji_insert_btn_on')
-  delete this.showTimeout
-  this.shown = true
 }
 
 EmojiTooltip.prototype.hide = function () {

@@ -1722,7 +1722,8 @@ angular.module('myApp.directives', ['myApp.filters'])
         },
         langpack: {
           im_emoji_tab: _('im_emoji_tab'),
-          im_stickers_tab: _('im_stickers_tab')
+          im_stickers_tab: _('im_stickers_tab'),
+          im_gif_tab: _('im_gif_tab')
         }
       })
 
